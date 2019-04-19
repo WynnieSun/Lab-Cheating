@@ -10,18 +10,20 @@ margins = {
   top:50,
   bottom:50,
   right:50,
-  left:175
+  left:75
 }
 
 var makeRectangles = function(penguins)
 {
-  var width = 800;
-  var height = 600;
+  var width = 1000;
+  var height = 800;
   var body = d3.select("body");
   var svg  = body.append("svg")
               .attr("width",width)
               .attr("height",height)
-              .classed("svg",true);
+              .classed("svg",true)
+              .attr("transform","translate(0,0)");
+
   var body = d3.select("body");
 
 
@@ -29,7 +31,7 @@ var makeRectangles = function(penguins)
   var plotHeight = height-margins.top-margins.bottom;
 
   var yScale = d3.scaleLinear()
-              .range([plotHeight,0])
+              .range([0,plotHeight])
               .domain([0,23]);
 
   var xScale = d3.scaleLinear()
@@ -41,6 +43,7 @@ var makeRectangles = function(penguins)
   var rectWidth = plotWidth/penguins.length;
   var rectHeight = plotHeight/penguins.length;
   penguins.forEach(function(penguin1,i1){
+    console.log(penguin1.picture);
     penguins.forEach(function(penguin2,i2){
       var corr = 0;
       if (penguin1.picture == penguin2.picture)
@@ -65,10 +68,25 @@ var makeRectangles = function(penguins)
     })
     // make y axis label
 
-    svg.append("text")
+    svg.append("image")
     .attr("x",25)
-    .attr("y",yScale(i1)+45)
-    .text(function(){return penguin1.picture.slice(0,-10)});
+    .attr("y",yScale(i1)+margins.top)
+    .attr("width",rectWidth)
+    .attr("height",rectHeight)
+    .attr("href", function(d,i){
+      return "penguins/"+penguin1.picture;
+    })
+    .attr("alt","Penguin Picture");
+
+    svg.append("image")
+    .attr("x",xScale(i1)+margins.left)
+    .attr("y",10)
+    .attr("width",rectWidth)
+    .attr("height",rectHeight)
+    .attr("href", function(d,i){
+      return "penguins/"+penguin1.picture;
+    })
+    .attr("alt","Penguin Picture");
 
     ///make x axis label
   })
