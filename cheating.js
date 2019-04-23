@@ -18,6 +18,8 @@ var makeRectangles = function(penguins)
   var width = 1000;
   var height = 800;
   var body = d3.select("body");
+  body.append("h1")
+  .text("Homework grades correlation");
   var svg  = body.append("svg")
               .attr("width",width)
               .attr("height",height)
@@ -25,6 +27,7 @@ var makeRectangles = function(penguins)
               .attr("transform","translate(0,0)");
 
   var body = d3.select("body");
+
 
   var plotWidth = width-margins.left-margins.right;
   var plotHeight = height-margins.top-margins.bottom;
@@ -48,9 +51,6 @@ var makeRectangles = function(penguins)
 
 
   })
-
-
-
 
   var yScale = d3.scaleLinear()
               .range([0,plotHeight])
@@ -88,13 +88,7 @@ var makeRectangles = function(penguins)
          .attr("y",i1*rectHeight+margins.top)
          .attr("fill",d3.interpolateRdBu((corr+1)/2))
 
-
-
-
-
-         //.on("mouseout");
-
-
+         //.on("mouseout"
 
     })
     // make y axis label
@@ -121,6 +115,82 @@ var makeRectangles = function(penguins)
 
     ///make x axis label
   })
+  body.append("h1")
+  .text("Quiz grades correlation");
+  var svg2  = body.append("svg")
+              .attr("width",width)
+              .attr("height",height)
+              .classed("svg",true)
+              .attr("transform","translate(0,0)");
+
+  var legend = svg2.append("g");
+  data = [-1,-.5,0,.5,1];
+  data.forEach(function(d,i){
+    legend.append("rect")
+    .attr("width",rectWidth)
+    .attr("height",rectHeight)
+    .attr("x",25*rectWidth+margins.left)
+    .attr("y",i*rectHeight+margins.top)
+    .attr("fill",d3.interpolateRdBu((d+1)/2))
+
+    legend.append("text").attr("x",26*rectWidth+margins.left+10)
+    .attr("y",i*rectHeight+margins.top+.5*rectHeight+5)
+    .text(d)
+
+
+  })
+
+  penguins.forEach(function(penguin1,i1){
+    console.log(penguin1.picture);
+    penguins.forEach(function(penguin2,i2){
+      var corr = 0;
+      if (penguin1.picture == penguin2.picture)
+      {
+        corr=1;
+      }
+      else {
+        var peng1HW = getQuizArray(penguin1);
+        var peng2HW = getQuizArray(penguin2);
+        corr = calculateCorrelation(peng1HW,peng2HW);
+      }
+      var group = svg2.append("g")
+         .datum(corr)
+         group.append("rect")
+         .attr("width",rectWidth)
+         .attr("height",rectHeight)
+         .attr("x",i2*rectWidth+margins.left)
+         .attr("y",i1*rectHeight+margins.top)
+         .attr("fill",d3.interpolateRdBu((corr+1)/2))
+
+         //.on("mouseout"
+
+    })
+    // make y axis label
+
+    svg2.append("image")
+    .attr("x",25)
+    .attr("y",yScale(i1)+margins.top)
+    .attr("width",rectWidth)
+    .attr("height",rectHeight)
+    .attr("href", function(d,i){
+      return "penguins/"+penguin1.picture;
+    })
+    .attr("alt","Penguin Picture");
+
+    svg2.append("image")
+    .attr("x",xScale(i1)+margins.left)
+    .attr("y",10)
+    .attr("width",rectWidth)
+    .attr("height",rectHeight)
+    .attr("href", function(d,i){
+      return "penguins/"+penguin1.picture;
+    })
+    .attr("alt","Penguin Picture");
+
+    ///make x axis label
+  })
+
+
 
 
 
@@ -156,11 +226,19 @@ var calculateCorrelation = function(peng1HW,peng2HW)
 }
 
 
+var getQuizArray = function(penguin)
+{
+  var hwGrades = penguin.quizes.map(function(d)
+  {
+    return d.grade;
+  });
+  return hwGrades;
+}
 
 
 var getHWArray = function(penguin)
 {
-  hwGrades = penguin.homework.map(function(d)
+  var hwGrades = penguin.homework.map(function(d)
   {
     return d.grade;
   });
