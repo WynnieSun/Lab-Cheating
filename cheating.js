@@ -9,7 +9,7 @@ function(err){
 margins = {
   top:50,
   bottom:50,
-  right:50,
+  right:200,
   left:75
 }
 
@@ -26,9 +26,31 @@ var makeRectangles = function(penguins)
 
   var body = d3.select("body");
 
-
   var plotWidth = width-margins.left-margins.right;
   var plotHeight = height-margins.top-margins.bottom;
+
+  var rectWidth = plotWidth/penguins.length;
+  var rectHeight = plotHeight/penguins.length;
+
+  var legend = svg.append("g");
+  data = [-1,-.5,0,.5,1];
+  data.forEach(function(d,i){
+    legend.append("rect")
+    .attr("width",rectWidth)
+    .attr("height",rectHeight)
+    .attr("x",25*rectWidth+margins.left)
+    .attr("y",i*rectHeight+margins.top)
+    .attr("fill",d3.interpolateRdBu((d+1)/2))
+
+    legend.append("text").attr("x",26*rectWidth+margins.left+10)
+    .attr("y",i*rectHeight+margins.top+.5*rectHeight+5)
+    .text(d)
+
+
+  })
+
+
+
 
   var yScale = d3.scaleLinear()
               .range([0,plotHeight])
@@ -40,8 +62,7 @@ var makeRectangles = function(penguins)
 
 
 
-  var rectWidth = plotWidth/penguins.length;
-  var rectHeight = plotHeight/penguins.length;
+
   penguins.forEach(function(penguin1,i1){
     console.log(penguin1.picture);
     penguins.forEach(function(penguin2,i2){
@@ -55,13 +76,23 @@ var makeRectangles = function(penguins)
         var peng2HW = getHWArray(penguin2);
         corr = calculateCorrelation(peng1HW,peng2HW);
       }
-      svg.append("rect")
+      var group = svg.append("g")
          .datum(corr)
+
+
+
+         group.append("rect")
          .attr("width",rectWidth)
          .attr("height",rectHeight)
          .attr("x",i2*rectWidth+margins.left)
          .attr("y",i1*rectHeight+margins.top)
-         .attr("fill",d3.interpolateRdBu((corr+1)/2));
+         .attr("fill",d3.interpolateRdBu((corr+1)/2))
+
+
+
+
+
+         //.on("mouseout");
 
 
 
